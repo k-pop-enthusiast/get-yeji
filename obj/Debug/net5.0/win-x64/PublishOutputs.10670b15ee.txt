@@ -1,0 +1,2 @@
+C:\Users\havel\Desktop\get-yeji\bin\Debug\net5.0\win-x64\publish\get-yeji.pdb
+C:\Users\havel\Desktop\get-yeji\bin\Debug\net5.0\win-x64\publish\get-yeji.exe
