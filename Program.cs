@@ -25,7 +25,7 @@ namespace get_yeji
             {
                 config.setup();
             }
-            
+
             while (true)
             {
                 string[] targets = scope.Split(',');
@@ -33,27 +33,29 @@ namespace get_yeji
                 foreach (string target in targets)
                 {
                     string[] info = target.Split('|');
-                    Get(info[0], info[1]);
+                    Get(info[0], info[1], info[2]);
                 }
                 Console.WriteLine("Cycle complete, next cycle in {0} miliseconds", interval);
                 Thread.Sleep(interval);
             }
         }
-        static void Get(string target, string targetDir)
+        static void Get(string mode, string target, string targetDir)
         {
-            var task = client.Search.SearchTweetsAsync(target);
-            task.Wait();
-            var tweets = task.Result;
-
-            Console.WriteLine("found tweets for {0}", target);
-
-            foreach (var tweet in tweets)
+            switch (mode)
             {
-                foreach (IMediaEntity media in tweet.Entities.Medias)
+                case "st":
+                var task = client.Search.SearchTweetsAsync(target);
+                task.Wait();
+                var tweets = task.Result;
+                
+                Console.WriteLine("found tweets for {0}", target);
+                foreach (var tweet in tweets)
                 {
-                    switch (media.MediaType)
+                    foreach (IMediaEntity media in tweet.Entities.Medias)
                     {
-                        case "photo":
+                        switch (media.MediaType)
+                        {
+                            case "photo":
                             Console.Write("downloading {0}\t", media.MediaURL);
                             try
                             {
@@ -66,8 +68,40 @@ namespace get_yeji
                                 throw;
                             }
                             break;
+                        }
                     }
                 }
+                break;
+                case "p":
+                var getTweets = client.Timelines.GetUserTimelineAsync(target);
+                getTweets.Wait();
+                var profileTweets = getTweets.Result;
+                
+                Console.WriteLine("found tweets for {0}", target);
+                foreach (var tweet in profileTweets)
+                {
+                    foreach (IMediaEntity media in tweet.Entities.Medias)
+                    {
+                        switch (media.MediaType)
+                        {
+                            case "photo":
+                            Console.Write("downloading {0}\t", media.MediaURL);
+
+                            try
+                            {
+                                download.image(media.MediaURL, downloadPath + targetDir);
+                                Console.WriteLine("Success");
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Fail");
+                                throw;
+                            }
+                            break;
+                        }
+                    }
+                }
+                break;
             }
         }
         public static class download
