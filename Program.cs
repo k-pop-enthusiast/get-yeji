@@ -140,7 +140,17 @@ namespace get_yeji
                 {
                     Console.WriteLine("Old {0}: {1}",type, ConfigurationManager.AppSettings.Get(type));
                     Console.Write("New {0}: ",type);
-                    config.set(type,Console.ReadLine());
+                    
+                    string input = Console.ReadLine();
+                    switch (input == "")
+                    {
+                        case true:
+                        break;
+                        case false:
+                        config.set(type,input);
+                        Console.WriteLine("Kept the old value(no new value was entered)");
+                        break;
+                    }
                 }
                 Console.WriteLine("new config generated");
                 Environment.Exit(0);
