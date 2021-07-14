@@ -8,7 +8,7 @@ get-yeji is a simple command line tool that downloads pictures from twitter that
 ## configuration
 by default get-yeji comes with dummy values that might cause a crash, that's why you need to do config before being able to use it. (asuming you installed it already)
 1. get `client_key`,`client_key_secret` and `bearer_key` from [Twitter developer portal](https://developer.twitter.com/en/portal/dashboard)
-2. decide where to store the download subdirectories(and don't forget to create the subdirectories too)
+2. decide where to store the download subdirectories(and don't forget to create the subdirectories too, another thing, end the master directory with "\" so the System.IO doesn't shit itself)
 3. decide how long the delay of each cycle is in miliseconds (this goes into the "interval")
 4. write the `scope`, this will determine what search term is going to be downloaded where. write in this form: `<search term>|<subdirectory name>\,<search term>|<subdirectory name>\`
 5. execute command `get-yeji config` and fill in the data from above:
