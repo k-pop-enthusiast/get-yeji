@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Net;
+using System.IO;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Threading;
 using Tweetinvi;
+using Tweetinvi.Models;
 using Tweetinvi.Models.Entities;
 
 namespace get_yeji
@@ -59,7 +61,26 @@ namespace get_yeji
                             Console.Write("downloading {0}\t", media.MediaURL);
                             try
                             {
-                                download.image(media.MediaURL, downloadPath + targetDir);
+                                download.image(media.MediaURL, dirPath.procedure(downloadPath,targetDir));
+                                Console.WriteLine("Success");
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Fail");
+                                throw;
+                            }
+                            break;
+
+                            case "video":
+
+                            string dirtyUrl = tweet.Entities.Medias[0].VideoDetails.Variants[0].URL;
+                            string vUrl = dirtyUrl.Remove(dirtyUrl.LastIndexOf("?"));
+
+                            Console.Write("downloading {0}\t", vUrl);
+
+                            try
+                            {
+                                download.video(vUrl, dirPath.procedure(downloadPath,targetDir));
                                 Console.WriteLine("Success");
                             }
                             catch (Exception)
@@ -89,7 +110,26 @@ namespace get_yeji
 
                             try
                             {
-                                download.image(media.MediaURL, downloadPath + targetDir);
+                                download.image(media.MediaURL, dirPath.procedure(downloadPath,targetDir));
+                                Console.WriteLine("Success");
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Fail");
+                                throw;
+                            }
+                            break;
+
+                            case "video":
+
+                            string dirtyUrl = tweet.Entities.Medias[0].VideoDetails.Variants[0].URL;
+                            string vUrl = dirtyUrl.Remove(dirtyUrl.LastIndexOf("?"));
+
+                            Console.Write("downloading {0}\t", vUrl);
+
+                            try
+                            {
+                                download.video(vUrl, dirPath.procedure(downloadPath,targetDir));
                                 Console.WriteLine("Success");
                             }
                             catch (Exception)
@@ -107,6 +147,18 @@ namespace get_yeji
         public static class download
         {
             public static void image(string url, string path)
+            {
+                string name = url.Trim();
+                name = name.Remove(0, name.LastIndexOf("/") + 1);
+
+                string file = path + name;
+
+                using (WebClient wclient = new WebClient())
+                {
+                    wclient.DownloadFile(new Uri(url), file);
+                }
+            }
+            public static void video(string url, string path)
             {
                 string name = url.Trim();
                 name = name.Remove(0, name.LastIndexOf("/") + 1);
@@ -173,6 +225,29 @@ namespace get_yeji
                 {
                     Console.WriteLine("Error writing app settings");
                 }
+            }
+        }
+        public static class dirPath
+        {
+            public static string procedure(string masterPath, string subDir)
+            {
+                masterPath = masterPath.Trim();
+                subDir = subDir.Trim();
+
+                if(!masterPath.EndsWith('\\'))
+                {
+                    masterPath = masterPath + @"\";
+                }
+                if (subDir.StartsWith('\\'))
+                {
+                    subDir = subDir.Remove(0,subDir.IndexOf('\\')+1);
+                }
+                if(!subDir.EndsWith('\\'))
+                {
+                    subDir = subDir + "\\";
+                }
+
+                return masterPath+subDir;
             }
         }
     }
