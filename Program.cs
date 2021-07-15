@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Threading;
 using Tweetinvi;
+using Tweetinvi.Models;
 using Tweetinvi.Models.Entities;
 
 namespace get_yeji
@@ -68,6 +69,25 @@ namespace get_yeji
                                 throw;
                             }
                             break;
+
+                            case "video":
+
+                            string dirtyUrl = tweet.Entities.Medias[0].VideoDetails.Variants[0].URL;
+                            string vUrl = dirtyUrl.Remove(dirtyUrl.LastIndexOf("?"));
+
+                            Console.Write("downloading {0}\t", vUrl);
+
+                            try
+                            {
+                                download.video(vUrl, downloadPath + targetDir);
+                                Console.WriteLine("Success");
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Fail");
+                                throw;
+                            }
+                            break;
                         }
                     }
                 }
@@ -98,6 +118,25 @@ namespace get_yeji
                                 throw;
                             }
                             break;
+
+                            case "video":
+
+                            string dirtyUrl = tweet.Entities.Medias[0].VideoDetails.Variants[0].URL;
+                            string vUrl = dirtyUrl.Remove(dirtyUrl.LastIndexOf("?"));
+
+                            Console.Write("downloading {0}\t", vUrl);
+
+                            try
+                            {
+                                download.video(vUrl, downloadPath + targetDir);
+                                Console.WriteLine("Success");
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Fail");
+                                throw;
+                            }
+                            break;
                         }
                     }
                 }
@@ -107,6 +146,18 @@ namespace get_yeji
         public static class download
         {
             public static void image(string url, string path)
+            {
+                string name = url.Trim();
+                name = name.Remove(0, name.LastIndexOf("/") + 1);
+
+                string file = path + name;
+
+                using (WebClient wclient = new WebClient())
+                {
+                    wclient.DownloadFile(new Uri(url), file);
+                }
+            }
+            public static void video(string url, string path)
             {
                 string name = url.Trim();
                 name = name.Remove(0, name.LastIndexOf("/") + 1);
